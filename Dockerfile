@@ -1,3 +1,16 @@
-FROM tomcat:8.0.20-jre8
-COPY tomcat-users.xml /usr/local/tomcat/conf
-COPY target/*.war /usr/local/tomcat/webapps/myweb.war
+FROM tomcat:9.0.84-jdk17-temurin
+
+WORKDIR /usr/local/tomcat
+
+# Optional: Replace Tomcat's default users if you have a custom config
+COPY tomcat-users.xml conf/
+
+# Remove default ROOT app
+RUN rm -rf webapps/ROOT
+
+# Copy your WAR file into Tomcat as ROOT.war
+COPY target/myweb-8.6.9.war webapps/ROOT.war
+
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]
