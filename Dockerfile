@@ -1,16 +1,14 @@
-FROM tomcat:9.0.84-jdk17-temurin
+# Use a stable Tomcat base image
+FROM tomcat:8.0.20-jre8
 
-WORKDIR /usr/local/tomcat
+# Copy the user config file
+COPY tomcat-users.xml /usr/local/tomcat/conf/
 
-# Optional: Replace Tomcat's default users if you have a custom config
-COPY tomcat-users.xml conf/
+# Remove the default ROOT app (optional, for cleanliness)
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
 
-# Remove default ROOT app
-RUN rm -rf webapps/ROOT
+# Copy your WAR file and rename it as ROOT.war if you want it to deploy at /
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-# Copy your WAR file into Tomcat as ROOT.war
-COPY target/myweb-8.6.9.war webapps/ROOT.war
-
+# Expose Tomcat's default port
 EXPOSE 8080
-
-CMD ["catalina.sh", "run"]
